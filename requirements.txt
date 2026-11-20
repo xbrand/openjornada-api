@@ -1,12 +1,15 @@
-fastapi==0.104.1
-uvicorn==0.23.2
-motor==3.1.1
-pymongo==4.3.3
-pydantic==2.4.2
+# Patched for CVE-2026-54283 and seven other starlette advisories.
+# starlette is pinned explicitly: fastapi's own constraint has no upper bound.
+starlette==1.10.0
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+motor==3.7.1
+pymongo==4.20.1
+pydantic==2.14.4
 PyJWT==2.10.1
 argon2-cffi==23.1.0
 bcrypt==4.2.1
-python-multipart==0.0.6
+python-multipart==0.0.34
 python-dotenv==1.0.0
 email-validator==2.0.0
 slowapi==0.1.10
@@ -20,7 +23,7 @@ paramiko==3.4.0
 cryptography==44.0.2
 
 # HTTP client (used by SMS service and tests)
-httpx==0.25.2
+httpx==0.28.1
 
 # Stripe subscriptions (optional per tenant)
 stripe==7.9.0
