@@ -4,14 +4,14 @@ WORKDIR /app
 
 # Install MongoDB database tools (for mongodump/mongorestore)
 # Using tarball for cross-architecture support (ARM64 and x86_64)
-# Version 100.9.0 - tested and working on both architectures
+# Version 100.12.0 - tested and working on both architectures (100.9.0 shipped Go 1.20.10, which is affected by CVE-2023-45288, CVE-2024-24790 and CVE-2025-68121; 100.12.0 is built with Go 1.23.7)
 RUN apt-get update && apt-get install -y wget ca-certificates libgssapi-krb5-2 && \
     ARCH=$(dpkg --print-architecture) && \
     echo "Detected architecture: $ARCH" && \
     if [ "$ARCH" = "arm64" ]; then \
-        MONGO_TOOLS_URL="https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-arm64-100.9.0.tgz"; \
+        MONGO_TOOLS_URL="https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-arm64-100.12.0.tgz"; \
     elif [ "$ARCH" = "amd64" ]; then \
-        MONGO_TOOLS_URL="https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-x86_64-100.9.0.tgz"; \
+        MONGO_TOOLS_URL="https://fastdl.mongodb.org/tools/db/mongodb-database-tools-ubuntu2004-x86_64-100.12.0.tgz"; \
     else \
         echo "Unsupported architecture: $ARCH" && exit 1; \
     fi && \
