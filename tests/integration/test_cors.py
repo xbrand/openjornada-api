@@ -24,5 +24,9 @@ def test_cors_config_never_combines_wildcard_with_credentials():
     cors_middleware = next(
         m for m in app.user_middleware if m.cls.__name__ == "CORSMiddleware"
     )
-    assert "*" not in cors_middleware.options["allow_origins"]
-    assert cors_middleware.options["allow_credentials"] is True
+    # starlette 1.x replaced Middleware.options with args/kwargs
+    options = getattr(cors_middleware, "options", None)
+    if options is None:
+        options = cors_middleware.kwargs
+    assert "*" not in options["allow_origins"]
+    assert options["allow_credentials"] is True
