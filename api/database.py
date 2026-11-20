@@ -1,3 +1,4 @@
+import asyncio
 import motor.motor_asyncio
 import os
 from dotenv import load_dotenv
@@ -30,6 +31,15 @@ def convert_id(obj):
 
 async def init_db():
     try:
+        # Motor binds the client to the event loop that is running when the
+        # first operation is issued. uvicorn >= 0.30 imports the application
+        # module *outside* the running loop, so any DB handle created at
+        # import time would latch onto a different, never-running loop and
+        # every query would fail with "got Future ... attached to a different
+        # loop". Bind the client to the loop we are actually on before the
+        # first query.
+        client._io_loop = asyncio.get_running_loop()
+
         # Create indexes for Workers
         await db.Workers.create_index("email", unique=True)
         await db.Workers.create_index("id_number", unique=True)

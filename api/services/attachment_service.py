@@ -19,7 +19,23 @@ from ..database import db
 ALLOWED_CONTENT_TYPES = {"application/pdf", "image/jpeg", "image/png"}
 MAX_ATTACHMENT_SIZE_BYTES = 5 * 1024 * 1024  # 5 MB
 
-_bucket = AsyncIOMotorGridFSBucket(db, bucket_name="absence_attachments")
+_bucket = None
+
+
+def _get_bucket() -> AsyncIOMotorGridFSBucket:
+    """Return the GridFS bucket, creating it on first use.
+
+    The bucket must not be built at import time. Motor binds the client to
+    whichever event loop is running when the handle is constructed, and
+    uvicorn >= 0.30 imports the application module *outside* the running
+    loop. A module-level bucket would therefore latch onto a different,
+    never-running loop and every GridFS call would fail with
+    "got Future ... attached to a different loop".
+    """
+    global _bucket
+    if _bucket is None:
+        _bucket = AsyncIOMotorGridFSBucket(db, bucket_name="absence_attachments")
+    return _bucket
 
 
 class AttachmentService:
@@ -75,7 +91,7 @@ class AttachmentService:
                 detail="El archivo está vacío",
             )
 
-        file_id = await _bucket.upload_from_stream(
+        file_id = await _get_bucket().upload_from_stream(
             filename,
             data,
             metadata={
@@ -109,7 +125,7 @@ class AttachmentService:
             )
 
         try:
-            stream = await _bucket.open_download_stream(oid)
+            stream = await _get_bucket().open_download_stream(oid)
         except Exception:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
