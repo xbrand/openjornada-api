@@ -31,7 +31,7 @@ RUN apt-get update && apt-get upgrade -y && \
 
 # Copy requirements first for caching
 COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade pip \
+RUN pip install --no-cache-dir --upgrade pip setuptools \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the application

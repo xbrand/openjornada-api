@@ -16,13 +16,13 @@ python-dotenv==1.2.2
 email-validator==2.0.0
 slowapi==0.1.10
 pytz==2026.4
-jinja2==3.1.3
+jinja2==3.1.4
 
 # Backup system
 apscheduler==3.10.4
 boto3==1.34.0
 paramiko==5.0.0
-cryptography==46.0.5
+cryptography==50.0.0
 
 # HTTP client (used by SMS service and tests)
 httpx==0.28.1
