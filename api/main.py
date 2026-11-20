@@ -11,8 +11,10 @@ from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 
 from .database import init_db, init_default_settings
+from .services.shift_planning import finish_pending_publications
 from .routers import workers, time_records, auth, incidents, settings, companies, pause_types, change_requests, gdpr, backups, reports
 from .routers import sms, subscription, events, notifications, absences, absence_policies, work_centers
+from .routers import shift_types, shift_plans
 from .services.scheduler_service import scheduler_service
 from .services.sms_service import sms_service
 from .utils.rate_limit import limiter
@@ -29,6 +31,7 @@ logging.basicConfig(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
+    await finish_pending_publications()
     await init_default_settings()
     await sms_service.initialize()
     await scheduler_service.start()
@@ -95,6 +98,8 @@ app.include_router(sms.router, prefix="/api", tags=["SMS"])
 app.include_router(subscription.router, prefix="/api", tags=["Subscription"])
 app.include_router(absences.router, prefix="/api/absences", tags=["Absences"])
 app.include_router(absence_policies.router, prefix="/api/absence-policies", tags=["Absence Policies"])
+app.include_router(shift_types.router, prefix="/api/shift-types", tags=["Shift Types"])
+app.include_router(shift_plans.router, prefix="/api/shift-plans", tags=["Shift Plans"])
 app.include_router(events.router, prefix="/api", tags=["Events"])
 app.include_router(notifications.router, prefix="/api", tags=["Notifications"])
 
