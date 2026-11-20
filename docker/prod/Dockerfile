@@ -1,3 +1,11 @@
+# Runtime configuration is injected by the orchestrator as container
+# environment variables (SECRET_KEY, MONGO_URL, SMTP_PASSWORD, ...).
+#
+# Do NOT declare ARG or ENV instructions for those values here. A build
+# platform that forwards every environment variable as a build argument will
+# then declare them as ARG in this file, and the resulting image layers
+# record the literal secret values in their history ("docker history" exposes
+# them). Keep every secret runtime-only.
 FROM python:3.12-slim
 
 WORKDIR /app
